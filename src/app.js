@@ -3,13 +3,15 @@ import { initCluster } from "./cluster.js"
 import { threadCount } from "./helpers.js"
 
 const totalEntries = 1_000
+const maxWorkers = threadCount
+const limit = Math.round(totalEntries / maxWorkers)
 
 seedDatabase(totalEntries)
 
 console.time("elapsed time")
 
 const { getWorker, killAll } = initCluster({
-  maxWorkers: threadCount,
+  maxWorkers,
   script: "src/task.js",
   onTaskDone: (count) => {
     if (count !== totalEntries) {
@@ -23,7 +25,8 @@ const { getWorker, killAll } = initCluster({
   },
 })
 
-for await (const data of getPagedData({ limit: 100 })) {
+for await (const data of getPagedData({ limit })) {
   const worker = getWorker()
+  console.log(`Sending task to worker: [${worker.pid}]`)
   worker.send({ data })
 }

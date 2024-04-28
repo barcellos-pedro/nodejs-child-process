@@ -16,6 +16,7 @@ export function seedDatabase(totalEntries) {
 }
 
 export async function* getPagedData({ limit = 5 }) {
+  console.log("db limit:", limit)
   do {
     console.log("Items remaining:", DB.length)
     await sleep(2_000)
