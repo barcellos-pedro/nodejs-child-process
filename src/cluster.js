@@ -19,6 +19,7 @@ function getNextWorker() {
  * end all child process
  */
 function killAll() {
+  console.log('terminating all workers...')
   WORKERS.forEach((worker) => process.kill(worker.pid))
 }
 
