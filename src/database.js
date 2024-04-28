@@ -3,8 +3,10 @@ import { sleep } from "./helpers.js"
 
 const DB = []
 
-export function seedDatabase(count = 60) {
-  for (let i = 1; i <= count; i++) {
+export function seedDatabase(totalEntries) {
+  console.log("Total entries:", totalEntries)
+
+  for (let i = 1; i <= totalEntries; i++) {
     DB.push({
       id: i,
       name: faker.person.fullName(),
@@ -13,10 +15,10 @@ export function seedDatabase(count = 60) {
   }
 }
 
-export async function* getPagedData(limit = 10) {
+export async function* getPagedData({ limit = 5 }) {
   do {
     console.log("Items remaining:", DB.length)
-    await sleep()
+    await sleep(2_000)
     yield DB.splice(0, limit)
   } while (DB.length)
 

@@ -19,18 +19,18 @@ function getNextWorker() {
  * end all child process
  */
 function killAll() {
-  console.log('terminating all workers...')
+  console.log("terminating all workers...")
   WORKERS.forEach((worker) => process.kill(worker.pid))
 }
 
-export function initCluster(
-  { maxWorkers, script, onTaskDone } = {
-    maxWorkers: 2,
-    script: "src/task.js",
-    onTaskDone: (count) => {},
-  }
-) {
+export function initCluster({
+  maxWorkers = 2,
+  script = "src/task.js",
+  onTaskDone = (count) => {},
+}) {
   let tasksDone = 0
+
+  console.log(`Preparing ${maxWorkers} workers...`)
 
   for (let i = 0; i < maxWorkers; i++) {
     const child = fork(script)
@@ -47,10 +47,10 @@ export function initCluster(
         console.log(data)
       })
       .on("close", () => {
-        console.log(`Worker ${child.pid} has been closed.`)
+        console.log(`Worker [${child.pid}] has been closed.`)
       })
       .on("error", (err) => {
-        console.log(`An error occurred on worker ${child.pid}\n`, err)
+        console.log(`An error occurred on worker [${child.pid}]\n`, err)
         process.kill(child.pid)
       })
 

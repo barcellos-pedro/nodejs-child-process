@@ -1,10 +1,9 @@
-import { isMainThread } from "node:worker_threads"
-
 import { sleep } from "./helpers.js"
 import { getLogger } from "./helpers.js"
+
 const log = getLogger(process.pid)
 
-log(`process initialized | isMainThread ${isMainThread}`)
+log("process initialized")
 
 /**
  * Fake processing...
@@ -15,7 +14,7 @@ async function processTask(data) {
 }
 
 // work on values received from parent process
-process.on("message", (data) => {
+process.on("message", ({ data = [], autoKill = false }) => {
   const taks = []
 
   for (const value of data) {
@@ -35,6 +34,6 @@ process.on("message", (data) => {
 
   Promise.all(taks).then(() => {
     process.send(`[${process.pid}] all tasks done.`)
-    // process.kill(0)
+    autoKill && process.kill(0)
   })
 })
