@@ -4,8 +4,7 @@ import { sleep } from "./helpers.js"
 import { getLogger } from "./helpers.js"
 const log = getLogger(process.pid)
 
-log("initialized")
-log("isMainThread? " + isMainThread)
+log(`process initialized | isMainThread ${isMainThread}`)
 
 /**
  * Fake processing...
@@ -25,7 +24,7 @@ process.on("message", (data) => {
     const task = processTask(value)
       .then((result) => {
         log(`item ${result.id} done`)
-        process.send(1)
+        process.send(1) // value to increment count
       })
       .catch(() => {
         log(`error processing task: ${value.id}`)
@@ -36,6 +35,6 @@ process.on("message", (data) => {
 
   Promise.all(taks).then(() => {
     process.send(`[${process.pid}] all tasks done.`)
-    process.kill(0)
+    // process.kill(0)
   })
 })
